@@ -31,11 +31,8 @@ video, canvas {
   pointer-events: none;
 }
 
-#capture {
+button {
   position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
   background: white;
   color: black;
   padding: 10px 20px;
@@ -46,17 +43,20 @@ video, canvas {
   z-index: 3;
 }
 
-#flip {
-  position: absolute;
+#capture {
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#flip-camera {
   bottom: 70px;
   left: 50%;
   transform: translateX(-50%);
-  background: white;
-  color: black;
-  padding: 10px 20px;
-  border: none;
-  font-size: 16px;
-  border-radius: 5px;
-  cursor: pointer;
-  z-index: 3;
+}
+
+#flip-spiral {
+  bottom: 120px;
+  left: 50%;
+  transform: translateX(-50%);
 }
