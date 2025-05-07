@@ -4,6 +4,11 @@ async function startCamera() {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
     const videoElement = document.getElementById('camera');
     videoElement.srcObject = stream;
+
+    videoElement.onloadedmetadata = () => {
+      videoElement.play();
+      console.log('Camera feed started');
+    };
   } catch (err) {
     console.error("Error accessing camera:", err);
   }
@@ -45,6 +50,7 @@ function drawFibonacciSpiral(canvas) {
 
 // Start the camera when the DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM loaded, starting camera');
   startCamera();
 
   // Get the canvas for the spiral
