@@ -25,12 +25,10 @@ function drawFibonacciSpiral(canvas, flipped = false) {
     let startAngle = (direction % 4) * Math.PI / 2;
     let endAngle = startAngle + Math.PI / 2;
 
-    // Flip horizontally
     if (flipped) {
       [startAngle, endAngle] = [Math.PI - startAngle, Math.PI - endAngle];
     }
 
-    // Offset the center of the arc for correct quadrant
     switch (direction % 4) {
       case 0: x -= r; break;
       case 1: y -= r; break;
@@ -62,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       currentStream = await navigator.mediaDevices.getUserMedia({
         video: {
-          facingMode: { exact: useFrontCamera ? 'user' : 'environment' }
+          facingMode: { ideal: useFrontCamera ? 'user' : 'environment' }
         },
         audio: false
       });
@@ -71,13 +69,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
       video.onloadedmetadata = () => {
         video.play();
-        draw(); // Only draw spiral when video is ready
+        draw();
       };
 
       video.style.transform = useFrontCamera ? 'scaleX(-1)' : 'scaleX(1)';
     } catch (err) {
       console.error('Error accessing camera:', err);
-      alert("Camera access failed. Try allowing camera permissions.");
+      alert("Camera access failed. Make sure permissions are allowed and you're using HTTPS.");
     }
   }
 
