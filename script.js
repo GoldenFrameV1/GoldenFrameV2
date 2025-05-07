@@ -7,53 +7,96 @@ function drawFibonacciSpiral(canvas, flipped = false) {
   ctx.strokeStyle = 'white';
   ctx.lineWidth = 2;
 
-  // Fibonacci sequence
   const fib = [1, 1];
   for (let i = 2; i < 12; i++) {
     fib[i] = fib[i - 1] + fib[i - 2];
   }
 
-  // Maximum size for the spiral
-  const maxSize = Math.min(width, height) * 0.9;
+  const scale = Math.min(width, height) * 0.005;
+  let x = width / 2;
+  let y = height / 2;
+  let direction = 0;
 
-  // Scale the Fibonacci numbers to fit inside the canvas
-  const scale = maxSize / fib[fib.length - 1];
-
-  // Start drawing the spiral from the center
-  let x = (width - maxSize) / 2;
-  let y = (height - maxSize) / 2;
-
-  let angle = 0;
-
-  // Draw the arcs following the golden ratio
   for (let i = 0; i < fib.length; i++) {
-    const size = fib[i] * scale;
+    const r = fib[i] * scale;
 
     ctx.beginPath();
-    let cx = x, cy = y;
 
-    // Adjust positions based on angle
-    switch (angle % 360) {
-      case 0: cx += size; cy += 0; break;
-      case 90: cx += 0; cy += size; break;
-      case 180: cx -= size; cy += 0; break;
-      case 270: cx += 0; cy -= size; break;
+    let startAngle = (direction % 4) * Math.PI / 2;
+    let endAngle = startAngle + Math.PI / 2;
+
+    // Flip horizontally
+    if (flipped) {
+      [startAngle, endAngle] = [Math.PI - startAngle, Math.PI - endAngle];
     }
 
-    // Rotate the spiral arcs if flipped
-    let radians = (flipped ? 180 : 0) + angle;
-    radians = radians * Math.PI / 180;
-    ctx.arc(cx, cy, size, radians, radians + Math.PI / 2);
+    // Offset the center of the arc for correct quadrant
+    switch (direction % 4) {
+      case 0: x -= r; break;
+      case 1: y -= r; break;
+      case 2: x += r; break;
+      case 3: y += r; break;
+    }
+
+    ctx.arc(x, y, r, startAngle, endAngle);
     ctx.stroke();
 
-    // Move the starting point of the next arc
-    switch (angle % 360) {
-      case 0: x += size; break;
-      case 90: y += size; break;
-      case 180: x -= fib[i - 1] * scale; break;
-      case 270: y -= fib[i - 1] * scale; break;
-    }
-
-    angle += 90;  // Move to the next quarter turn
+    direction++;
   }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const video = document.getElementById('video');
+  const overlayCanvas = document.getElementById('overlay');
+  const flipCamBtn = document.getElementById('flip-camera');
+  const flipSpiralBtn = document.getElementById('flip-spiral');
+  let useFrontCamera = false;
+  let spiralFlipped = false;
+  let currentStream = null;
+
+  async function startCamera() {
+    if (currentStream) {
+      currentStream.getTracks().forEach(track => track.stop());
+    }
+
+    try {
+      currentStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: { exact: useFrontCamera ? 'user' : 'environment' }
+        },
+        audio: false
+      });
+
+      video.srcObject = currentStream;
+
+      video.onloadedmetadata = () => {
+        video.play();
+        draw(); // Only draw spiral when video is ready
+      };
+
+      video.style.transform = useFrontCamera ? 'scaleX(-1)' : 'scaleX(1)';
+    } catch (err) {
+      console.error('Error accessing camera:', err);
+      alert("Camera access failed. Try allowing camera permissions.");
+    }
+  }
+
+  flipCamBtn.addEventListener('click', () => {
+    useFrontCamera = !useFrontCamera;
+    startCamera();
+  });
+
+  flipSpiralBtn.addEventListener('click', () => {
+    spiralFlipped = !spiralFlipped;
+    draw();
+  });
+
+  function draw() {
+    drawFibonacciSpiral(overlayCanvas, spiralFlipped);
+  }
+
+  window.addEventListener('resize', draw);
+
+  draw();
+  startCamera();
+});
