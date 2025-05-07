@@ -1,3 +1,14 @@
+// Function to start the camera
+async function startCamera() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    const videoElement = document.getElementById('camera');
+    videoElement.srcObject = stream;
+  } catch (err) {
+    console.error("Error accessing camera:", err);
+  }
+}
+
 // Function to draw the Fibonacci spiral
 function drawFibonacciSpiral(canvas) {
   const ctx = canvas.getContext('2d');
@@ -32,15 +43,19 @@ function drawFibonacciSpiral(canvas) {
   ctx.stroke();
 }
 
-// Wait for the DOM to be fully loaded before trying to access the canvas
+// Start the camera when the DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-  const overlayCanvas = document.getElementById('overlay');
-  if (overlayCanvas) {
-      drawFibonacciSpiral(overlayCanvas);
+  startCamera();
 
-      // Redraw the spiral when the window is resized
-      window.addEventListener('resize', () => drawFibonacciSpiral(overlayCanvas));
+  // Get the canvas for the spiral
+  const overlayCanvas = document.getElementById('spiral');
+  if (overlayCanvas) {
+    // Redraw the Fibonacci spiral when the window is resized
+    window.addEventListener('resize', () => drawFibonacciSpiral(overlayCanvas));
+
+    // Initially draw the spiral
+    drawFibonacciSpiral(overlayCanvas);
   } else {
-      console.error("Canvas element with id 'overlay' not found.");
+    console.error("Canvas element with id 'spiral' not found.");
   }
 });
