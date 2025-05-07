@@ -11,8 +11,8 @@ body {
 #camera-container {
   position: relative;
   width: 100%;
-  max-width: 480px;
-  aspect-ratio: 3/4;
+  max-width: 100vh; /* allow flexibility in both portrait and landscape */
+  aspect-ratio: 4/3;
 }
 
 video, canvas {
