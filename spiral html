@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fibonacci Spiral</title>
+    <style>
+        /* Basic styling for the canvas */
+        body {
+            margin: 0;
+            overflow: hidden; /* Hide scrollbars if canvas is full screen */
+            background-color: black; /* Or any background you prefer */
+        }
+        #overlay {
+            display: block; /* Remove extra space below canvas */
+            width: 100vw; /* Make canvas full viewport width */
+            height: 100vh; /* Make canvas full viewport height */
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="overlay"></canvas>
+
+    <script>
+        // Your JavaScript code for drawing the Fibonacci spiral goes here
+        function drawFibonacciSpiral(canvas) {
+          const ctx = canvas.getContext('2d');
+          const width = canvas.width = canvas.offsetWidth;
+          const height = canvas.height = canvas.offsetHeight;
+          ctx.clearRect(0, 0, width, height);
+
+          ctx.strokeStyle = 'white';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+
+          let x = 0, y = 0;
+          let size = Math.min(width, height);
+          let scale = size / 1.618; // Golden ratio
+
+          x = (width - scale) / 2;
+          y = (height - scale) / 2;
+
+          let a = scale / 2;
+          let angle = 0;
+
+          ctx.moveTo(x + a, y);
+
+          for (let i = 0; i < 1000; i++) {
+            let radius = a * Math.sqrt(i / 100);
+            angle = i * 0.1;
+            let spiralX = x + a + radius * Math.cos(angle);
+            let spiralY = y + a + radius * Math.sin(angle);
+            ctx.lineTo(spiralX, spiralY);
+          }
+
+          ctx.stroke();
+        }
+
+        const overlayCanvas = document.getElementById('overlay');
+        drawFibonacciSpiral(overlayCanvas);
+
+        window.addEventListener('resize', () => drawFibonacciSpiral(overlayCanvas));
+    </script>
+
+</body>
+</html>
