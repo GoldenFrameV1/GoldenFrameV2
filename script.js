@@ -7,10 +7,8 @@ function drawFibonacciSpiral(canvas, flipped = false) {
   ctx.strokeStyle = 'white';
   ctx.lineWidth = 2;
 
-  // Set size so spiral fits within canvas
   const maxSize = Math.min(width, height) * 0.9;
 
-  // Fibonacci sequence for spiral blocks
   const fib = [1, 1];
   for (let i = 2; i < 12; i++) {
     fib[i] = fib[i - 1] + fib[i - 2];
@@ -37,12 +35,10 @@ function drawFibonacciSpiral(canvas, flipped = false) {
       case 270: cx += size; cy += 0; break;
     }
 
-    // Flip logic
     const radians = ((flipped ? 180 : 0) + angle) * Math.PI / 180;
     ctx.arc(cx, cy, size, radians, radians + Math.PI / 2);
     ctx.stroke();
 
-    // Adjust position for next square
     switch (angle % 360) {
       case 0: x += size; break;
       case 90: y += size; break;
@@ -53,3 +49,28 @@ function drawFibonacciSpiral(canvas, flipped = false) {
     angle += 90;
   }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const video = document.getElementById('video');
+  const overlayCanvas = document.getElementById('overlay');
+
+  // Start the camera
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        video.srcObject = stream;
+        video.play();
+      })
+      .catch(err => {
+        console.error('Error accessing camera:', err);
+      });
+  }
+
+  // Draw the spiral
+  function draw() {
+    drawFibonacciSpiral(overlayCanvas, false);
+  }
+
+  draw();
+  window.addEventListener('resize', draw);
+});
